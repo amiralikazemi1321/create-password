@@ -1,301 +1,1186 @@
+```html
 <!doctype html>
-<!--
-Password Generator Website
-Single-file HTML/CSS/JS.
-Features:
-- Choose length (4-128)
-- Toggle: lowercase, uppercase, numbers, symbols, avoid ambiguous chars
-- Real-time entropy & strength meter
-- Generate, copy to clipboard, reveal/hide, download as .txt
-- Accessible labels and keyboard-friendly
-- No external libraries
--->
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="description"
+    content="Generate strong random passwords locally in your browser."
+  >
+
   <title>Secure Password Creator</title>
+
   <style>
-    :root{
-      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#9aa7b2; --success:#10b981; --danger:#ef4444;
-      --glass: rgba(255,255,255,0.04);
+    :root {
       color-scheme: dark;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+
+      --bg: #070b14;
+      --bg-secondary: #0d1322;
+      --card: rgba(15, 23, 42, 0.82);
+      --card-border: rgba(255, 255, 255, 0.08);
+
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+
+      --accent: #22d3ee;
+      --accent-secondary: #8b5cf6;
+
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+
+      --input: rgba(255, 255, 255, 0.05);
+      --input-hover: rgba(255, 255, 255, 0.08);
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071028 0%,#08121a 100%);color:#e6f0f2}
-    .wrap{max-width:980px;margin:32px auto;padding:24px}
-    header{display:flex;align-items:baseline;gap:16px}
-    h1{margin:0;font-size:1.6rem}
-    p.lead{margin:0;color:var(--muted)}
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.6);margin-top:18px}
+    * {
+      box-sizing: border-box;
+    }
 
-    .row{display:flex;gap:16px;flex-wrap:wrap}
-    .col{flex:1;min-width:260px}
+    html {
+      min-height: 100%;
+    }
 
-    label{display:block;font-size:0.85rem;color:var(--muted);margin-bottom:6px}
-    input[type="range"]{width:100%}
-    input[type="number"]{width:80px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
-    .controls{display:flex;gap:12px;align-items:center}
+    body {
+      min-height: 100vh;
+      margin: 0;
 
-    .switch{display:flex;align-items:center;gap:8px}
-    .checkbox{display:inline-flex;align-items:center;gap:10px}
-    .checkbox input{width:18px;height:18px}
+      background:
+        radial-gradient(
+          circle at 20% 10%,
+          rgba(34, 211, 238, 0.10),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 80% 90%,
+          rgba(139, 92, 246, 0.10),
+          transparent 35%
+        ),
+        var(--bg);
 
-    .output{display:flex;align-items:center;gap:12px;padding:14px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.03)}
-    .password{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;word-break:break-all;font-size:1.05rem}
+      color: var(--text);
+    }
 
-    button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;cursor:pointer}
-    button.primary{background:linear-gradient(90deg,var(--accent),#7c3aed);border:none;color:#042029}
+    button,
+    input {
+      font: inherit;
+    }
 
-    .meter{height:10px;border-radius:8px;background:rgba(255,255,255,0.04);overflow:hidden}
-    .meter > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--success),#f59e0b)}
+    button {
+      cursor: pointer;
+    }
 
-    .meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px}
-    small{color:var(--muted)}
+    .app {
+      width: min(1050px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0;
+    }
 
-    footer{margin-top:18px;color:var(--muted);font-size:0.85rem}
+    .header {
+      margin-bottom: 28px;
+    }
 
-    @media (max-width:520px){.row{flex-direction:column}.controls{flex-direction:column;align-items:stretch}}
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 6px 10px;
+      margin-bottom: 14px;
+
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      border-radius: 999px;
+
+      background: rgba(34, 211, 238, 0.06);
+
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .header p {
+      max-width: 680px;
+      margin: 14px 0 0;
+
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: 20px;
+    }
+
+    .card {
+      padding: 24px;
+
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+
+      background: var(--card);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+      backdrop-filter: blur(16px);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .card-description {
+      margin: 7px 0 22px;
+
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Length */
+
+    .length-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .length-value {
+      min-width: 48px;
+      padding: 5px 9px;
+
+      border-radius: 8px;
+
+      background: rgba(34, 211, 238, 0.08);
+
+      color: var(--accent);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .length-controls {
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 9px;
+
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+
+      background: var(--input);
+      color: var(--text);
+
+      outline: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+    }
+
+    /* Options */
+
+    .options {
+      display: grid;
+      gap: 9px;
+      margin-top: 24px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+
+      padding: 11px 12px;
+
+      border: 1px solid transparent;
+      border-radius: 10px;
+
+      background: rgba(255, 255, 255, 0.025);
+
+      color: #cbd5e1;
+      cursor: pointer;
+
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .option:hover {
+      background: var(--input-hover);
+    }
+
+    .option:has(input:checked) {
+      border-color: rgba(34, 211, 238, 0.18);
+      background: rgba(34, 211, 238, 0.05);
+    }
+
+    .option input {
+      width: 17px;
+      height: 17px;
+      margin: 0;
+
+      accent-color: var(--accent);
+    }
+
+    /* Buttons */
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    button {
+      padding: 11px 14px;
+
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+
+      background: var(--input);
+      color: var(--text);
+
+      transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    button:hover {
+      background: var(--input-hover);
+      border-color: rgba(255, 255, 255, 0.13);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button.primary {
+      grid-column: 1 / -1;
+
+      border: none;
+
+      background:
+        linear-gradient(
+          110deg,
+          var(--accent),
+          var(--accent-secondary)
+        );
+
+      color: #041018;
+      font-weight: 800;
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* Password */
+
+    .password-box {
+      position: relative;
+
+      min-height: 155px;
+      padding: 20px;
+
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .password-label {
+      margin-bottom: 12px;
+
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .password {
+      width: 100%;
+      min-height: 58px;
+
+      border: 0;
+      outline: 0;
+
+      background: transparent;
+
+      color: var(--text);
+
+      font-family:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.6;
+
+      overflow-wrap: anywhere;
+    }
+
+    .password::selection {
+      background: rgba(34, 211, 238, 0.3);
+    }
+
+    .password-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .password-actions button {
+      flex: 1;
+    }
+
+    /* Strength */
+
+    .strength-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-top: 22px;
+      margin-bottom: 9px;
+    }
+
+    .strength-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .strength-value {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .meter {
+      height: 9px;
+
+      overflow: hidden;
+
+      border-radius: 999px;
+
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .meter-fill {
+      width: 0;
+      height: 100%;
+
+      border-radius: inherit;
+
+      background: var(--danger);
+
+      transition:
+        width 0.25s ease,
+        background 0.25s ease;
+    }
+
+    .entropy {
+      margin-top: 10px;
+
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 14px;
+
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    /* Info */
+
+    .info {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .info-item strong {
+      color: #cbd5e1;
+    }
+
+    footer {
+      margin-top: 22px;
+
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        padding: 28px 0;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        width: min(100% - 20px, 1050px);
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 16px;
+      }
+
+      .length-controls {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Secure Password Creator</h1>
-        <p class="lead">Generate strong, random passwords with configurable options — copy or download instantly.</p>
+  <main class="app">
+
+    <header class="header">
+      <div class="header-badge">
+        🔐 Local password generator
       </div>
+
+      <h1>Secure Password Creator</h1>
+
+      <p>
+        Generate strong random passwords directly in your browser.
+        Nothing is uploaded to a server.
+      </p>
     </header>
 
-    <section class="card" aria-labelledby="generator-heading">
-      <h2 id="generator-heading" style="margin-top:0">Password Generator</h2>
+    <div class="layout">
 
-      <div class="row" style="margin-top:12px">
-        <div class="col">
-          <label for="length">Length: <strong id="lenVal">16</strong></label>
-          <div class="controls">
-            <input id="length" type="range" min="4" max="128" value="16" aria-valuemin="4" aria-valuemax="128" />
-            <input id="lengthNum" type="number" min="4" max="128" value="16" />
-          </div>
+      <!-- Settings -->
 
-          <div style="height:12px"></div>
+      <section class="card">
+        <h2>Password settings</h2>
 
-          <div class="checkbox">
-            <label><input type="checkbox" id="lower" checked /> Lowercase (a-z)</label>
-          </div>
-          <div class="checkbox">
-            <label><input type="checkbox" id="upper" checked /> Uppercase (A-Z)</label>
-          </div>
-          <div class="checkbox">
-            <label><input type="checkbox" id="numbers" checked /> Numbers (0-9)</label>
-          </div>
-          <div class="checkbox">
-            <label><input type="checkbox" id="symbols" checked /> Symbols (!@#$...)</label>
-          </div>
-          <div class="checkbox">
-            <label><input type="checkbox" id="noAmb" /> Exclude ambiguous (i, l, 1, O, 0)</label>
-          </div>
+        <p class="card-description">
+          Choose the length and character types you want to use.
+        </p>
 
-          <div style="height:12px"></div>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="generate" class="primary">Generate</button>
-            <button id="shuffle">Regenerate</button>
-            <button id="download">Download .txt</button>
-          </div>
+        <div class="length-header">
+          <label for="length">Password length</label>
+          <span id="lenVal" class="length-value">16</span>
         </div>
 
-        <div class="col">
-          <label for="output">Generated password</label>
-          <div class="output" role="region" aria-live="polite">
-            <div style="flex:1">
-              <div id="output" class="password" tabindex="0" aria-label="generated password">&nbsp;</div>
-              <small id="entropy">Entropy: — bits • Strength: —</small>
-              <div style="height:8px"></div>
-              <div class="meter" aria-hidden="true"><i id="meterFill"></i></div>
-            </div>
+        <div class="length-controls">
+          <input
+            id="length"
+            type="range"
+            min="4"
+            max="128"
+            value="16"
+            aria-label="Password length"
+          >
 
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
-              <button id="copy">Copy</button>
-              <button id="reveal">Show</button>
-            </div>
-          </div>
-
-          <div class="meta">
-            <small>Tip: use a password manager to store long random passwords securely.</small>
-          </div>
+          <input
+            id="lengthNum"
+            type="number"
+            min="4"
+            max="128"
+            value="16"
+            aria-label="Password length number"
+          >
         </div>
-      </div>
 
-      <footer>
-        Built locally — nothing is sent to a server. The randomness uses browser crypto when available.
-      </footer>
-    </section>
-  </div>
+        <div class="options">
+
+          <label class="option">
+            <input id="lower" type="checkbox" checked>
+            <span>Lowercase <strong>(a-z)</strong></span>
+          </label>
+
+          <label class="option">
+            <input id="upper" type="checkbox" checked>
+            <span>Uppercase <strong>(A-Z)</strong></span>
+          </label>
+
+          <label class="option">
+            <input id="numbers" type="checkbox" checked>
+            <span>Numbers <strong>(0-9)</strong></span>
+          </label>
+
+          <label class="option">
+            <input id="symbols" type="checkbox" checked>
+            <span>Symbols <strong>(!@#$...)</strong></span>
+          </label>
+
+          <label class="option">
+            <input id="noAmb" type="checkbox">
+            <span>Exclude ambiguous characters</span>
+          </label>
+
+        </div>
+
+        <div class="actions">
+          <button id="generate" class="primary">
+            Generate password
+          </button>
+
+          <button id="shuffle">
+            ↻ Regenerate
+          </button>
+
+          <button id="download">
+            ↓ Download
+          </button>
+        </div>
+      </section>
+
+      <!-- Result -->
+
+      <section class="card">
+        <h2>Your password</h2>
+
+        <p class="card-description">
+          A new password is generated locally in your browser.
+        </p>
+
+        <div class="password-box">
+
+          <div class="password-label">
+            Generated password
+          </div>
+
+          <div
+            id="output"
+            class="password"
+            role="textbox"
+            aria-live="polite"
+            tabindex="0"
+          ></div>
+
+          <div class="password-actions">
+            <button id="copy">
+              Copy
+            </button>
+
+            <button id="reveal">
+              Show
+            </button>
+          </div>
+
+        </div>
+
+        <div class="strength-header">
+          <span class="strength-label">
+            Password strength
+          </span>
+
+          <span
+            id="strength"
+            class="strength-value"
+          >
+            —
+          </span>
+        </div>
+
+        <div
+          class="meter"
+          role="progressbar"
+          aria-label="Password strength"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div id="meterFill" class="meter-fill"></div>
+        </div>
+
+        <div id="entropy" class="entropy">
+          Entropy: —
+        </div>
+
+        <div
+          id="status"
+          class="status"
+          aria-live="polite"
+        ></div>
+
+        <div class="info">
+
+          <div class="info-item">
+            <span>✓</span>
+            <span>
+              <strong>Local:</strong>
+              the password is generated in your browser.
+            </span>
+          </div>
+
+          <div class="info-item">
+            <span>✓</span>
+            <span>
+              <strong>Secure randomness:</strong>
+              uses Web Crypto when available.
+            </span>
+          </div>
+
+          <div class="info-item">
+            <span>✓</span>
+            <span>
+              <strong>Tip:</strong>
+              use a password manager for storing random passwords.
+            </span>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <footer>
+      No external libraries. No server. No password data is transmitted.
+    </footer>
+
+  </main>
 
   <script>
-    // Character sets
+    "use strict";
+
     const SETS = {
-      lower: 'abcdefghijklmnopqrstuvwxyz',
-      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      numbers: '0123456789',
+      lower: "abcdefghijklmnopqrstuvwxyz",
+      upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      numbers: "0123456789",
       symbols: "!@#$%^&*()-_=+[]{};:'\\\",.<>/?`~"
     };
 
-    // DOM
-    const length = document.getElementById('length');
-    const lengthNum = document.getElementById('lengthNum');
-    const lenVal = document.getElementById('lenVal');
-    const lower = document.getElementById('lower');
-    const upper = document.getElementById('upper');
-    const numbers = document.getElementById('numbers');
-    const symbols = document.getElementById('symbols');
-    const noAmb = document.getElementById('noAmb');
-    const generateBtn = document.getElementById('generate');
-    const shuffleBtn = document.getElementById('shuffle');
-    const output = document.getElementById('output');
-    const meterFill = document.getElementById('meterFill');
-    const entropyLabel = document.getElementById('entropy');
-    const copyBtn = document.getElementById('copy');
-    const revealBtn = document.getElementById('reveal');
-    const downloadBtn = document.getElementById('download');
+    const AMBIGUOUS = /[il1Lo0O]/g;
 
-    // Sync range and number
-    function syncLength(v){
-      length.value = v; lengthNum.value = v; lenVal.textContent = v;
-    }
-    length.addEventListener('input', e=> syncLength(e.target.value));
-    lengthNum.addEventListener('change', e=>{
-      let v = Number(e.target.value) || 16;
-      if(v < 4) v = 4; if(v > 128) v = 128;
-      syncLength(v);
-    });
+    const elements = {
+      length: document.getElementById("length"),
+      lengthNum: document.getElementById("lengthNum"),
+      lenVal: document.getElementById("lenVal"),
 
-    // Remove ambiguous characters
-    function filterAmbiguous(str){
-      return str.replace(/[il1Lo0O]/g, '');
-    }
+      lower: document.getElementById("lower"),
+      upper: document.getElementById("upper"),
+      numbers: document.getElementById("numbers"),
+      symbols: document.getElementById("symbols"),
+      noAmb: document.getElementById("noAmb"),
 
-    // Build pool
-    function buildPool(){
-      let pool = '';
-      if(lower.checked) pool += SETS.lower;
-      if(upper.checked) pool += SETS.upper;
-      if(numbers.checked) pool += SETS.numbers;
-      if(symbols.checked) pool += SETS.symbols;
-      if(noAmb.checked) pool = filterAmbiguous(pool);
-      // dedupe
-      pool = Array.from(new Set(pool.split(''))).join('');
-      return pool;
-    }
+      generate: document.getElementById("generate"),
+      shuffle: document.getElementById("shuffle"),
+      download: document.getElementById("download"),
 
-    // Secure random integers
-    function randInt(n){
-      // returns integer in [0, n)
-      if(window.crypto && window.crypto.getRandomValues){
-        const max = Math.floor(0xFFFFFFFF / n) * n; // avoid modulo bias
-        const arr = new Uint32Array(1);
-        let r;
-        do{ window.crypto.getRandomValues(arr); r = arr[0]; } while(r >= max);
-        return r % n;
-      }
-      return Math.floor(Math.random()*n);
-    }
+      output: document.getElementById("output"),
+      copy: document.getElementById("copy"),
+      reveal: document.getElementById("reveal"),
 
-    function generatePassword(){
-      const pool = buildPool();
-      const L = Number(length.value);
-      if(pool.length === 0){ output.textContent = 'Please select at least one character set.'; updateMeter(0,0); return ''; }
-      let pw = '';
-      for(let i=0;i<L;i++){
-        const idx = randInt(pool.length);
-        pw += pool[idx];
-      }
-      // Show
-      output.textContent = pw;
-      updateEntropyAndMeter(pw, pool.length);
-      return pw;
-    }
+      strength: document.getElementById("strength"),
+      entropy: document.getElementById("entropy"),
+      meterFill: document.getElementById("meterFill"),
+      meter: document.querySelector(".meter"),
 
-    function updateEntropyAndMeter(pw, poolSize){
-      if(!pw || poolSize<=0){ updateMeter(0,0); entropyLabel.textContent='Entropy: — bits • Strength: —'; return; }
-      const L = pw.length;
-      const entropy = Math.round(L * Math.log2(poolSize));
-      // Strength: rough mapping
-      let strength = 'Very weak';
-      let pct = 0;
-      if(entropy < 28){ strength = 'Very weak'; pct = 12; }
-      else if(entropy < 36){ strength = 'Weak'; pct = 28; }
-      else if(entropy < 60){ strength = 'Reasonable'; pct = 52; }
-      else if(entropy < 80){ strength = 'Strong'; pct = 78; }
-      else { strength = 'Very strong'; pct = 98; }
+      status: document.getElementById("status")
+    };
 
-      entropyLabel.textContent = `Entropy: ${entropy} bits • Strength: ${strength}`;
-      updateMeter(pct, entropy);
-    }
-
-    function updateMeter(pct, entropy){
-      meterFill.style.width = pct + '%';
-      // color: interpolate roughly from danger to success
-      if(pct < 28) meterFill.style.background = 'linear-gradient(90deg,var(--danger),#f97316)';
-      else if(pct < 52) meterFill.style.background = 'linear-gradient(90deg,#f97316,#f59e0b)';
-      else if(pct < 78) meterFill.style.background = 'linear-gradient(90deg,#f59e0b,var(--accent))';
-      else meterFill.style.background = 'linear-gradient(90deg,var(--success),#34d399)';
-    }
-
-    // Copy to clipboard
-    copyBtn.addEventListener('click', async ()=>{
-      const text = output.textContent || '';
-      if(!text) return;
-      try{
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(()=> copyBtn.textContent = 'Copy', 1400);
-      }catch(e){
-        // fallback
-        const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
-        try{ document.execCommand('copy'); copyBtn.textContent = 'Copied!'; setTimeout(()=>copyBtn.textContent='Copy',1400);}catch(e){}
-        ta.remove();
-      }
-    });
-
-    // Reveal/hide
+    let currentPassword = "";
     let revealed = false;
-    revealBtn.addEventListener('click', ()=>{
-      revealed = !revealed;
-      revealBtn.textContent = revealed ? 'Hide' : 'Show';
-      output.style.webkitTextSecurity = revealed ? 'none' : 'disc';
-      output.style.MozUserSelect = 'text';
-    });
 
-    // Generate handlers
-    generateBtn.addEventListener('click', generatePassword);
-    shuffleBtn.addEventListener('click', generatePassword);
 
-    // Download as .txt
-    downloadBtn.addEventListener('click', ()=>{
-      const text = output.textContent || '';
-      if(!text) return alert('No password generated yet.');
-      const blob = new Blob([text], {type:'text/plain'});
+    function syncLength(value) {
+      let length = Number(value);
+
+      if (!Number.isFinite(length)) {
+        length = 16;
+      }
+
+      length = Math.min(128, Math.max(4, Math.round(length)));
+
+      elements.length.value = length;
+      elements.lengthNum.value = length;
+      elements.lenVal.textContent = length;
+    }
+
+
+    function getSelectedSets() {
+      const selected = [];
+
+      if (elements.lower.checked) {
+        selected.push(SETS.lower);
+      }
+
+      if (elements.upper.checked) {
+        selected.push(SETS.upper);
+      }
+
+      if (elements.numbers.checked) {
+        selected.push(SETS.numbers);
+      }
+
+      if (elements.symbols.checked) {
+        selected.push(SETS.symbols);
+      }
+
+      if (elements.noAmb.checked) {
+        return selected.map((set) =>
+          set.replace(AMBIGUOUS, "")
+        );
+      }
+
+      return selected;
+    }
+
+
+    function buildPool(selectedSets) {
+      return [
+        ...new Set(selectedSets.join("").split(""))
+      ].join("");
+    }
+
+
+    function secureRandomInt(max) {
+      if (!Number.isInteger(max) || max <= 0) {
+        throw new Error("Invalid random range.");
+      }
+
+      if (
+        window.crypto &&
+        typeof window.crypto.getRandomValues === "function"
+      ) {
+        const maxUint32 = 0x100000000;
+        const limit = maxUint32 - (maxUint32 % max);
+
+        const values = new Uint32Array(1);
+
+        do {
+          window.crypto.getRandomValues(values);
+        } while (values[0] >= limit);
+
+        return values[0] % max;
+      }
+
+      return Math.floor(Math.random() * max);
+    }
+
+
+    function randomCharacter(characters) {
+      return characters[
+        secureRandomInt(characters.length)
+      ];
+    }
+
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = secureRandomInt(i + 1);
+
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+
+      return array;
+    }
+
+
+    function generatePassword() {
+      const selectedSets = getSelectedSets();
+      const pool = buildPool(selectedSets);
+      const length = Number(elements.length.value);
+
+      if (pool.length === 0) {
+        showError("Select at least one character type.");
+        clearPassword();
+        return;
+      }
+
+      if (length < selectedSets.length) {
+        showError(
+          `Password length must be at least ${selectedSets.length}.`
+        );
+
+        clearPassword();
+        return;
+      }
+
+      /*
+       * First put one character from every selected category
+       * into the password. This guarantees that the user's
+       * selected categories are actually represented.
+       */
+      const password = [];
+
+      for (const characterSet of selectedSets) {
+        if (characterSet.length === 0) {
+          continue;
+        }
+
+        password.push(
+          randomCharacter(characterSet)
+        );
+      }
+
+      /*
+       * Fill the remaining positions from the complete pool.
+       */
+      while (password.length < length) {
+        password.push(randomCharacter(pool));
+      }
+
+      /*
+       * Shuffle the result so that the required characters
+       * aren't always placed at the beginning.
+       */
+      shuffle(password);
+
+      currentPassword = password.join("");
+
+      revealed = false;
+      updatePasswordDisplay();
+      updateStrength(currentPassword, pool.length);
+
+      showStatus("Password generated successfully.", "success");
+    }
+
+
+    function updatePasswordDisplay() {
+      if (!currentPassword) {
+        elements.output.textContent = "—";
+        return;
+      }
+
+      if (revealed) {
+        elements.output.textContent = currentPassword;
+      } else {
+        elements.output.textContent =
+          "•".repeat(currentPassword.length);
+      }
+
+      elements.reveal.textContent =
+        revealed ? "Hide" : "Show";
+    }
+
+
+    function calculateEntropy(length, poolSize) {
+      if (length <= 0 || poolSize <= 1) {
+        return 0;
+      }
+
+      return Math.round(
+        length * Math.log2(poolSize)
+      );
+    }
+
+
+    function getStrength(entropy) {
+      if (entropy < 28) {
+        return {
+          label: "Very weak",
+          percentage: 15
+        };
+      }
+
+      if (entropy < 36) {
+        return {
+          label: "Weak",
+          percentage: 30
+        };
+      }
+
+      if (entropy < 60) {
+        return {
+          label: "Reasonable",
+          percentage: 55
+        };
+      }
+
+      if (entropy < 80) {
+        return {
+          label: "Strong",
+          percentage: 80
+        };
+      }
+
+      return {
+        label: "Very strong",
+        percentage: 100
+      };
+    }
+
+
+    function updateStrength(password, poolSize) {
+      const entropy = calculateEntropy(
+        password.length,
+        poolSize
+      );
+
+      const strength = getStrength(entropy);
+
+      elements.strength.textContent =
+        strength.label;
+
+      elements.entropy.textContent =
+        `Entropy: ${entropy} bits`;
+
+      elements.meterFill.style.width =
+        `${strength.percentage}%`;
+
+      elements.meterFill.style.background =
+        getStrengthColor(strength.percentage);
+
+      elements.meter.setAttribute(
+        "aria-valuenow",
+        strength.percentage
+      );
+    }
+
+
+    function getStrengthColor(percentage) {
+      if (percentage <= 15) {
+        return "var(--danger)";
+      }
+
+      if (percentage <= 30) {
+        return "#f97316";
+      }
+
+      if (percentage <= 55) {
+        return "var(--warning)";
+      }
+
+      if (percentage <= 80) {
+        return "var(--accent)";
+      }
+
+      return "var(--success)";
+    }
+
+
+    function clearPassword() {
+      currentPassword = "";
+      elements.strength.textContent = "—";
+      elements.entropy.textContent = "Entropy: —";
+      elements.meterFill.style.width = "0%";
+      elements.meter.setAttribute("aria-valuenow", "0");
+
+      updatePasswordDisplay();
+    }
+
+
+    async function copyPassword() {
+      if (!currentPassword) {
+        showError("Generate a password first.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(
+          currentPassword
+        );
+
+        showStatus(
+          "Password copied to clipboard.",
+          "success"
+        );
+
+        temporarilyChangeButton(
+          elements.copy,
+          "Copied!"
+        );
+      } catch {
+        showError(
+          "Clipboard access was blocked by the browser."
+        );
+      }
+    }
+
+
+    function downloadPassword() {
+      if (!currentPassword) {
+        showError("Generate a password first.");
+        return;
+      }
+
+      const blob = new Blob(
+        [currentPassword],
+        { type: "text/plain;charset=utf-8" }
+      );
+
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'password.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "password.txt";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(url);
+
+      showStatus(
+        "Password downloaded.",
+        "success"
+      );
+    }
+
+
+    function temporarilyChangeButton(
+      button,
+      text
+    ) {
+      const original = button.textContent;
+
+      button.textContent = text;
+      button.disabled = true;
+
+      setTimeout(() => {
+        button.textContent = original;
+        button.disabled = false;
+      }, 1400);
+    }
+
+
+    function showStatus(message, type = "") {
+      elements.status.textContent = message;
+      elements.status.className = `status ${type}`;
+    }
+
+
+    function showError(message) {
+      showStatus(message, "error");
+    }
+
+
+    function toggleReveal() {
+      if (!currentPassword) {
+        showError("Generate a password first.");
+        return;
+      }
+
+      revealed = !revealed;
+      updatePasswordDisplay();
+    }
+
+
+    elements.length.addEventListener(
+      "input",
+      (event) => {
+        syncLength(event.target.value);
+      }
+    );
+
+
+    elements.lengthNum.addEventListener(
+      "change",
+      (event) => {
+        syncLength(event.target.value);
+        generatePassword();
+      }
+    );
+
+
+    elements.generate.addEventListener(
+      "click",
+      generatePassword
+    );
+
+
+    elements.shuffle.addEventListener(
+      "click",
+      generatePassword
+    );
+
+
+    elements.copy.addEventListener(
+      "click",
+      copyPassword
+    );
+
+
+    elements.reveal.addEventListener(
+      "click",
+      toggleReveal
+    );
+
+
+    elements.download.addEventListener(
+      "click",
+      downloadPassword
+    );
+
+
+    [
+      elements.lower,
+      elements.upper,
+      elements.numbers,
+      elements.symbols,
+      elements.noAmb
+    ].forEach((element) => {
+      element.addEventListener(
+        "change",
+        generatePassword
+      );
     });
 
-    // Auto-generate initial password on load
-    window.addEventListener('DOMContentLoaded', ()=>{
-      // mask output by default
-      output.style.webkitTextSecurity = 'disc';
-      generatePassword();
-    });
 
-    // Regenerate when options change (live feedback)
-    [lower,upper,numbers,symbols,noAmb].forEach(el => el.addEventListener('change', ()=>{
-      // keep existing text selected if user wants; just regenerate
-      generatePassword();
-    }));
-    length.addEventListener('change', ()=> generatePassword());
+    window.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        syncLength(16);
+        generatePassword();
+      }
+    );
   </script>
 </body>
 </html>
+```
