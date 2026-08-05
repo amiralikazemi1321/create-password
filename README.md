@@ -60,7 +60,7 @@ G7@kP2!xQ9#mL4$z
 
 ```text
 password-creator/
-├── sait.py
+├── sait.html
 ├── README.md
 └── LICENSE
 ```
