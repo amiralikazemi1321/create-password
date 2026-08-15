@@ -1,94 +1,49 @@
-# 🔐 Password Creator
+# 🔐 Password Creator (HTML/CSS)
 
-A simple and customizable password generator written in Python.
+این پروژه یک Password Generator ساده است که با HTML، CSS و JavaScript ساخته شده — نه با Python.
 
-Password Creator lets you quickly generate random passwords with control over their length and the types of characters they contain.
+هدف: یک صفحه‌ی وب سبک برای تولید رمز عبور تصادفی با گزینه‌های پایه‌ای مانند طول و انواع حرف‌ها.
 
-## ✨ Features
+ویژگی‌ها
 
-* 🔑 Generate random passwords
-* 📏 Choose the password length
-* 🔤 Uppercase letters
-* 🔡 Lowercase letters
-* 🔢 Numbers
-* 🔣 Special characters
-* ⚡ Fast and lightweight
-* 🐍 Written entirely in Python
+- تولید رمز عبور تصادفی
+- تنظیم طول رمز
+- انتخاب شامل/نکردن حروف بزرگ، حروف کوچک، اعداد و نمادها
+- اجرا در مرورگر (نیاز به نصب ندارد)
 
-## 🚀 Getting Started
+فایل‌های کلیدی
 
-### Requirements
+- `sait.html` — صفحهٔ اصلی و نقطهٔ ورود. (برای اجرای پروژه، کافی‌ست این فایل را باز کنید)
+- `README.md` — (این فایل)
+- `LICENSE` — مجوز MIT
 
-* Python 3.10+
+نحوه اجرا
 
-### Clone the repository
+- آسان‌ترین روش:
+  - فایل `sait.html` را در مرورگر باز کنید (دابل‌کلیک یا کشیدن به پنجره مرورگر).
 
-```bash
-git clone https://github.com/YOUR_USERNAME/password-creator.git
-cd password-creator
-```
-
-### Run
+- اگر می‌خواهید آن را از طریق یک سرور محلی ببینید (مثلاً برای تنظیمات CORS یا تست‌های محلی):
+  - در پوشهٔ پروژه یک ترمینال باز کنید و دستور زیر را اجرا کنید:
 
 ```bash
-python main.py
+# با پایتون 3
+python -m http.server 8000
+# سپس در مرورگر به http://localhost:8000/sait.html بروید
 ```
 
-## 🛠️ How It Works
+آینده / ایده‌ها
 
-Password Creator builds a character set based on the options selected by the user and randomly chooses characters from that set until the requested password length is reached.
+- جداسازی CSS و JS به فایل‌های جدا برای نگهداری بهتر
+- اضافه کردن دکمهٔ "کپی به کلیپ‌بورد"
+- ارزیابی قدرت رمز و نمایش سطح امنیت
+- اضافه کردن گزینهٔ ذخیرهٔ تاریخچهٔ رمزها (با احتیاط امنیتی)
 
-For example, you can choose:
+توجه امنیتی
 
-```text
-Length: 16
-Uppercase: ✓
-Lowercase: ✓
-Numbers: ✓
-Symbols: ✓
-```
+این ابزار صرفاً برای تولید رمزهای نمونه و آموزشی است. تولید و نمایش رمزها در مرورگر محلی ممکن است برای کاربردهای حساس مناسب نباشد؛ برای استفادهٔ واقعی در محیط‌های تولیدی، توصیه می‌شود از کتابخانه‌ها/ابزارهای معتبر و بررسی‌های امنیتی استفاده کنید.
 
-And get a password such as:
+مجوز
 
-```text
-G7@kP2!xQ9#mL4$z
-```
+این پروژه تحت مجوز MIT منتشر شده — برای جزئیات به فایل `LICENSE` مراجعه کنید.
 
-> The example above is only an example and should not be used as an actual password.
-
-## 📂 Project Structure
-
-```text
-password-creator/
-├── sait.html
-├── README.md
-└── LICENSE
-```
-
-## 🎯 Goals
-
-This project was created as a small Python project to practice:
-
-* Random data generation
-* String manipulation
-* User input
-* Program structure
-* Building a simple command-line application
-
-## 🔮 Future Ideas
-
-Possible improvements for future versions:
-
-* [ ] Password strength estimation
-* [ ] Copy generated password to clipboard
-* [ ] GUI version
-* [ ] Password history
-* [ ] Custom character sets
-* [ ] Command-line arguments
-* [ ] Unit tests
-
-## 📜 License
-
-This project is licensed under the MIT License.
-
-See the `LICENSE` file for more information.
+اگر می‌خواهید تغییر خاصی در README اعمال شود (مثلاً اضافه کردن نمونهٔ خروجی، اسکرین‌شات یا دستورکار توسعه)، بگویید تا اعمال کنم.
