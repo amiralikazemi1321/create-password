@@ -1,49 +1,50 @@
-# 🔐 Password Creator (HTML/CSS)
+# 🔐 Password Creator (HTML/CSS/JS)
 
-این پروژه یک Password Generator ساده است که با HTML، CSS و JavaScript ساخته شده — نه با Python.
+This project is a simple Password Generator built with HTML, CSS, and JavaScript — not Python.
 
-هدف: یک صفحه‌ی وب سبک برای تولید رمز عبور تصادفی با گزینه‌های پایه‌ای مانند طول و انواع حرف‌ها.
+Purpose
 
-ویژگی‌ها
+A lightweight web page that generates random passwords with basic options such as length and character types.
 
-- تولید رمز عبور تصادفی
-- تنظیم طول رمز
-- انتخاب شامل/نکردن حروف بزرگ، حروف کوچک، اعداد و نمادها
-- اجرا در مرورگر (نیاز به نصب ندارد)
+Features
 
-فایل‌های کلیدی
+- Generate random passwords
+- Choose password length
+- Include/exclude uppercase letters, lowercase letters, numbers, and symbols
+- Runs entirely in the browser (no installation required)
 
-- `sait.html` — صفحهٔ اصلی و نقطهٔ ورود. (برای اجرای پروژه، کافی‌ست این فایل را باز کنید)
-- `README.md` — (این فایل)
-- `LICENSE` — مجوز MIT
+Key files
 
-نحوه اجرا
+- `sait.html` — the main page and entry point. Open this file in a browser to run the app.
+- `README.md` — this file
+- `LICENSE` — MIT License
 
-- آسان‌ترین روش:
-  - فایل `sait.html` را در مرورگر باز کنید (دابل‌کلیک یا کشیدن به پنجره مرورگر).
+How to run
 
-- اگر می‌خواهید آن را از طریق یک سرور محلی ببینید (مثلاً برای تنظیمات CORS یا تست‌های محلی):
-  - در پوشهٔ پروژه یک ترمینال باز کنید و دستور زیر را اجرا کنید:
+- Quick start:
+  - Open `sait.html` in your browser (double-click or drag into a browser window).
+
+- To run via a local HTTP server (useful for testing or avoiding local file restrictions):
 
 ```bash
-# با پایتون 3
+# Using Python 3
 python -m http.server 8000
-# سپس در مرورگر به http://localhost:8000/sait.html بروید
+# Then open http://localhost:8000/sait.html in your browser
 ```
 
-آینده / ایده‌ها
+Future ideas
 
-- جداسازی CSS و JS به فایل‌های جدا برای نگهداری بهتر
-- اضافه کردن دکمهٔ "کپی به کلیپ‌بورد"
-- ارزیابی قدرت رمز و نمایش سطح امنیت
-- اضافه کردن گزینهٔ ذخیرهٔ تاریخچهٔ رمزها (با احتیاط امنیتی)
+- Split CSS and JS into separate files for better maintainability
+- Add a "Copy to clipboard" button
+- Show password strength estimation
+- Optionally save a history of generated passwords (mindful of security concerns)
 
-توجه امنیتی
+Security notice
 
-این ابزار صرفاً برای تولید رمزهای نمونه و آموزشی است. تولید و نمایش رمزها در مرورگر محلی ممکن است برای کاربردهای حساس مناسب نباشد؛ برای استفادهٔ واقعی در محیط‌های تولیدی، توصیه می‌شود از کتابخانه‌ها/ابزارهای معتبر و بررسی‌های امنیتی استفاده کنید.
+This tool is intended for educational and convenience use. Generating and displaying passwords in a local browser may not be suitable for production or highly sensitive uses. For critical use cases, prefer well-reviewed libraries and follow security best practices.
 
-مجوز
+License
 
-این پروژه تحت مجوز MIT منتشر شده — برای جزئیات به فایل `LICENSE` مراجعه کنید.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-اگر می‌خواهید تغییر خاصی در README اعمال شود (مثلاً اضافه کردن نمونهٔ خروجی، اسکرین‌شات یا دستورکار توسعه)، بگویید تا اعمال کنم.
+If you want additional changes to the README (example outputs, screenshots, or developer instructions), tell me what to add and I will update it.
