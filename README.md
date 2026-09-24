@@ -15,7 +15,7 @@ Features
 
 Key files
 
-- `sait.html` — the main page and entry point. Open this file in a browser to run the app.
+- `index.html` — the main page and entry point. Open this file in a browser to run the app.
 - `README.md` — this file
 - `LICENSE` — MIT License
 
