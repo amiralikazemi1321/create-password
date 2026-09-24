@@ -21,23 +21,9 @@ Key files
 
 How to run
 
-- Quick start:
-  - Open `index.html` in your browser (double-click or drag into a browser window).
+open index.html
 
-- To run via a local HTTP server (useful for testing or avoiding local file restrictions):
-
-```bash
-# Using Python 3
-python -m http.server 8000
-# Then open http://localhost:8000/index.html in your browser
-```
-
-Future ideas
-
-- Split CSS and JS into separate files for better maintainability
-- Add a "Copy to clipboard" button
-- Show password strength estimation
-- Optionally save a history of generated passwords (mindful of security concerns)
+or use create_password link
 
 Security notice
 
