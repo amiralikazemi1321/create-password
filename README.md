@@ -22,7 +22,7 @@ Key files
 How to run
 
 - Quick start:
-  - Open `sait.html` in your browser (double-click or drag into a browser window).
+  - Open `index.html` in your browser (double-click or drag into a browser window).
 
 - To run via a local HTTP server (useful for testing or avoiding local file restrictions):
 
